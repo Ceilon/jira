@@ -6,6 +6,7 @@
  */
 import {useState, useEffect} from 'react'
 
+
 /**
  * 判断参数类型
  * @param tgt undefined、null、string、number、boolean、array、object、symbol、date、regexp、function、asyncfunction、arguments、set、map、weakset、weakmap
@@ -75,11 +76,34 @@ export const cleanObject = (object: {}) => {
  * @param delay
  * @returns {function(): void}
  */
-export const useDebounce = (value:any, delay:number) => {
+export const useDebounce = (value: any, delay: number) => {
     const [debounceValue, setDebounceValue] = useState(value)
     useEffect(() => {
         const timer = setTimeout(() => setDebounceValue(value), delay);
         return () => clearTimeout(timer)
     }, [value, delay])
     return debounceValue
+}
+
+
+/**
+ *
+ * @param persons
+ */
+export const useArray = <A>(persons: A[]) => {
+    const [value, setPerson] = useState(persons)
+    const add = (person: A): void => {
+        setPerson([...value, person])
+    }
+    const removeIndex = (index: number): void => {
+        let a = [...value];
+        a.splice(index, 1)
+        setPerson(a)
+    }
+
+    const clean = (): void => {
+        setPerson([])
+    }
+
+    return {value, add, removeIndex, clean}
 }
