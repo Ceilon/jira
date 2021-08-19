@@ -8,8 +8,10 @@ import React, {useEffect, useState} from 'react';
 import {SearchPanel} from "./search-panel";
 import {List} from "./list";
 import qs from 'qs'
-import {cleanObject, useDebounce} from "../../utils/utils";
+import {cleanObject, dataType, useDebounce} from "../../utils/utils";
 import useMount from "../../customHooks/useMount";
+import {useHttp} from "../../http";
+import {handleUserResponse} from "../../auth-provider";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -20,21 +22,14 @@ export const ScriptListScreen = () => {
     })
     const [users, setUsers] = useState([])
     const [list, setList] = useState([])
-    const useDebounceParam =useDebounce(param,1000)
+    const useDebounceParam = useDebounce(param, 1000)
+    const http = useHttp()
     useEffect(() => {
-        fetch(`${apiUrl}/projects?${qs.stringify(cleanObject(useDebounceParam))}`).then(async response => {
-            if (response.ok) {
-                setList(await response.json())
-            }
-        })
+        http('projects', {data: cleanObject(useDebounceParam)}).then(data => setList(data))
     }, [useDebounceParam])
 
     useMount(() => {
-        fetch(`${apiUrl}/users`).then(async response => {
-            if (response.ok) {
-                setUsers(await response.json())
-            }
-        })
+        http('users').then(data =>setUsers(data))
     })
 
     return <div>

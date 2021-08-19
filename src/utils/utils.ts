@@ -46,28 +46,31 @@ export const existObj = (obj: {}) => {
  * @param value
  * @returns {boolean}
  */
-export const isFalsy = (value: any) => value === 0 ? true : !!value;
+export const isFalsy = (value: unknown) => value === 0 ? true : !!value;
 
+
+export const isVoid = (value: unknown) =>
+    value === undefined || value === null || value === "";
 
 /**
  * 清理空键值对
  * @param object
  * @returns {*}
  */
-export const cleanObject = (object: {}) => {
-    if (existObj(object)) {
-        let _object = {...object};
-        Object.keys(_object).forEach(key => {
-            // @ts-ignore
-            let value = _object[key];
-            if (!isFalsy(value)) {
-                // @ts-ignore
-                delete _object[key]
-            }
-        })
-        return _object
+export const cleanObject = (object?: { [key: string]: unknown }):any => {
+    // Object.assign({}, object)
+    if (!object) {
+        return {};
     }
-}
+    const result = { ...object };
+    Object.keys(result).forEach((key) => {
+        const value = result[key];
+        if (isVoid(value)) {
+            delete result[key];
+        }
+    });
+    return result;
+};
 
 
 /**
